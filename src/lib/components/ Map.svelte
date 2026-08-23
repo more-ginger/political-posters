@@ -83,8 +83,10 @@
         map.panTo(currentWalkPosition)
     }
 </script>
-<div class="h-20 bg-red-200 z-2 flex items-stretch">
+<div class="h-full relative">
+<div class="h-20 bg-red-200 z-2 flex items-stretch sticky top-0 z-2">
     <button class="bg-purple-100 w-1/2 text-center border" onclick={walkBack}>back</button>
     <button class="bg-purple-100 w-1/2 text-center border" onclick={walkForward}>forth</button>
 </div>
-<div class="w-full h-full bg-green-100" use:mapAction></div>
+<div class="w-full h-full bg-green-100 absolute top-0 z-1" use:mapAction></div>
+</div>
