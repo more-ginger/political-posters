@@ -9,6 +9,7 @@
         [52.521060, 13.414911],
         [52.521970, 13.416022],
         [52.521728, 13.417370],
+        [52.520182, 13.422436],
         [52.518469, 13.428276],
         [52.515790, 13.454157],
         [52.513495, 13.477016],
@@ -71,16 +72,16 @@
         indexOfWalkPosition = indexOfWalkPosition > 0 
         ? indexOfWalkPosition - 1
         : indexOfWalkPosition;
-        map.panTo(currentWalkPosition)
+        map.panTo(currentWalkPosition, {animate: true, duration: 1})
     }
 
     function walkForward () {
         if (!map) return;
 
-        indexOfWalkPosition = indexOfWalkPosition <= arrayOfCoordinates.length 
+        indexOfWalkPosition = indexOfWalkPosition < arrayOfCoordinates.length 
         ? indexOfWalkPosition + 1 
         : indexOfWalkPosition;
-        map.panTo(currentWalkPosition)
+        map.panTo(currentWalkPosition, {animate: true, duration: 1})
     }
 </script>
 <div class="h-full relative">
