@@ -1,8 +1,9 @@
 <script lang="ts">
     import type L from "leaflet";
     import 'leaflet/dist/leaflet.css';
-    let map: L.Map | void;
+    let map: L.Map | void = $state(undefined);
 
+    // current walk, this could be passed as props if other walks will be planned
     const arrayOfCoordinates: L.LatLngExpression[] = [
         [52.521961, 13.413004],
         [52.521060, 13.414911],
@@ -16,7 +17,9 @@
       ]
 
     async function createMap(container: HTMLDivElement) {
+        // async import to avoid leaflet attaching itselt to non-existing window
         const L = (await import('leaflet')).default;
+        // init map with fix zoom and no control
         let m = L.map(container, {
             minZoom: 18,
             maxZoom: 18,
@@ -39,6 +42,8 @@
             const setOfCoordinates = arrayOfCoordinates[index];
             L.marker(setOfCoordinates).addTo(m);
         }
+
+        return m
     }
 
     function mapAction(container: HTMLDivElement) {
@@ -53,6 +58,33 @@
             }
         }
     }
-</script>
 
+    // Interaction: the user clicks back and forth to "walk" the path
+    // index for position
+    let indexOfWalkPosition: number = $state(0);
+    // set of coordinates for the walk, updates on click
+    let currentWalkPosition: L.LatLngExpression = $derived(arrayOfCoordinates[indexOfWalkPosition])
+
+    function walkBack() {
+        if (!map) return;
+
+        indexOfWalkPosition = indexOfWalkPosition > 0 
+        ? indexOfWalkPosition - 1
+        : indexOfWalkPosition;
+        map.panTo(currentWalkPosition)
+    }
+
+    function walkForward () {
+        if (!map) return;
+
+        indexOfWalkPosition = indexOfWalkPosition <= arrayOfCoordinates.length 
+        ? indexOfWalkPosition + 1 
+        : indexOfWalkPosition;
+        map.panTo(currentWalkPosition)
+    }
+</script>
+<div class="h-20 bg-red-200 z-2 flex items-stretch">
+    <button class="bg-purple-100 w-1/2 text-center border" onclick={walkBack}>back</button>
+    <button class="bg-purple-100 w-1/2 text-center border" onclick={walkForward}>forth</button>
+</div>
 <div class="w-full h-full bg-green-100" use:mapAction></div>
