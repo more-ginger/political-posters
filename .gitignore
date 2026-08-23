@@ -1,2 +1,4 @@
-/.svelte-kit
+.svelte-kit
 e2e
+node_modules
+package-lock.json
