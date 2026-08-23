@@ -1,6 +1,8 @@
 <script lang="ts">
     import type L from "leaflet";
     import 'leaflet/dist/leaflet.css';
+    import * as turf from "@turf/turf"
+  import { trusted } from "svelte/legacy";
     let map: L.Map | void = $state(undefined);
 
     // current walk, this could be passed as props if other walks will be planned
@@ -16,6 +18,45 @@
         [52.512118, 13.490261],
         [52.511318, 13.499087]
       ]
+
+    // TO DO: move to an utils.js file
+    // function using turf to generating in-between pairs of coordinates from initial ones.
+    // I use it so that panTo is smoother and the user always walks in regular intervals
+    function densifySegment(a: number[], b: number[], maxDistance: number, out: number[]) {
+        // calculate distance
+        const dist = turf.distance(a, b, {units: 'kilometers'});
+
+        // if the distance is already smaller than delta, pushes coordinates
+        if (dist <= maxDistance) {
+            out.push(a);
+            return;
+        }
+
+        // if not, it calculates the midpoint between a and b
+        // then runs itself again, until the delta is met
+        const midpoint = turf.midpoint(a, b);
+        const midpointCoordinates = midpoint.geometry.coordinates
+        const midpointTuples = [midpointCoordinates[0], midpointCoordinates[1]]
+        densifySegment(a, midpointTuples, maxDistance, out);
+        densifySegment(midpointTuples, b, maxDistance, out)
+    }
+
+    // Here I input an original array with coordinates, already ordered according to my walk
+    // I return a "densified" array, where more in-between points are generated
+    function createMoreCoordinates(initialArrayOfCoordinates: L.LatLngExpression[], maxDeltaKm: number) {
+        const out: number[] = []
+        for (let index = 0; index < initialArrayOfCoordinates.length - 1; index++) {
+            const a: number[] = initialArrayOfCoordinates[index];
+            const b: L.LatLngExpression = initialArrayOfCoordinates[index + 1];
+
+            densifySegment(a, b, maxDeltaKm, out)
+            
+        }
+
+        return out;
+    }
+
+    const moreCoordinates = $derived(createMoreCoordinates(arrayOfCoordinates, 0.2));
 
     async function createMap(container: HTMLDivElement) {
         // async import to avoid leaflet attaching itselt to non-existing window
@@ -39,8 +80,9 @@
 
         L.polyline(arrayOfCoordinates, {color: 'red'}).addTo(m);
 
-        for (let index = 0; index < arrayOfCoordinates.length; index++) {
-            const setOfCoordinates = arrayOfCoordinates[index];
+        for (let index = 0; index < moreCoordinates.length; index++) {
+            const setOfCoordinates = moreCoordinates[index];
+            console.log(setOfCoordinates)
             L.marker(setOfCoordinates).addTo(m);
         }
 
@@ -64,30 +106,27 @@
     // index for position
     let indexOfWalkPosition: number = $state(0);
     // set of coordinates for the walk, updates on click
-    let currentWalkPosition: L.LatLngExpression = $derived(arrayOfCoordinates[indexOfWalkPosition])
+    let currentWalkPosition: L.LatLngExpression = $derived(moreCoordinates[indexOfWalkPosition])
 
-    function walkBack() {
+    function goTo(direction: string) {
         if (!map) return;
 
-        indexOfWalkPosition = indexOfWalkPosition > 0 
-        ? indexOfWalkPosition - 1
-        : indexOfWalkPosition;
-        map.panTo(currentWalkPosition, {animate: true, duration: 1})
-    }
-
-    function walkForward () {
-        if (!map) return;
-
-        indexOfWalkPosition = indexOfWalkPosition < arrayOfCoordinates.length 
-        ? indexOfWalkPosition + 1 
-        : indexOfWalkPosition;
+        if (direction === 'back') {
+            indexOfWalkPosition = indexOfWalkPosition > 0 
+            ? indexOfWalkPosition - 1
+            : indexOfWalkPosition;
+        } else {
+            indexOfWalkPosition = indexOfWalkPosition < moreCoordinates.length 
+            ? indexOfWalkPosition + 1 
+            : indexOfWalkPosition;  
+        } 
         map.panTo(currentWalkPosition, {animate: true, duration: 1})
     }
 </script>
 <div class="h-full relative">
 <div class="h-20 bg-red-200 z-2 flex items-stretch sticky top-0 z-2">
-    <button class="bg-purple-100 w-1/2 text-center border" onclick={walkBack}>back</button>
-    <button class="bg-purple-100 w-1/2 text-center border" onclick={walkForward}>forth</button>
+    <button class="bg-purple-100 w-1/2 text-center border" onclick={() => goTo('back')}>back</button>
+    <button class="bg-purple-100 w-1/2 text-center border" onclick={() => goTo('forward')}>forth</button>
 </div>
 <div class="w-full h-full bg-green-100 absolute top-0 z-1" use:mapAction></div>
 </div>
