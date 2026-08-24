@@ -1,8 +1,7 @@
 <script lang="ts">
     import type L from "leaflet";
     import 'leaflet/dist/leaflet.css';
-    import * as turf from "@turf/turf"
-  import { trusted } from "svelte/legacy";
+    import {densifySegment} from "$lib/utils";
     let map: L.Map | void = $state(undefined);
 
     // current walk, this could be passed as props if other walks will be planned
@@ -19,47 +18,22 @@
         [52.511318, 13.499087]
       ]
 
-    // TO DO: move to an utils.js file
-    // function using turf to generating in-between pairs of coordinates from initial ones.
-    // I use it so that panTo is smoother and the user always walks in regular intervals
-    function densifySegment(a: number[], b: number[], maxDistance: number, out: number[]) {
-        // calculate distance
-        const dist = turf.distance(a, b, {units: 'kilometers'});
-
-        // if the distance is already smaller than delta, pushes coordinates
-        if (dist <= maxDistance) {
-            out.push(a);
-            return;
-        }
-
-        // if not, it calculates the midpoint between a and b
-        // then runs itself again, until the delta is met
-        const midpoint = turf.midpoint(a, b);
-        const midpointCoordinates = midpoint.geometry.coordinates
-        const midpointTuples = [midpointCoordinates[0], midpointCoordinates[1]]
-        densifySegment(a, midpointTuples, maxDistance, out);
-        densifySegment(midpointTuples, b, maxDistance, out)
-    }
-
     // Here I input an original array with coordinates, already ordered according to my walk
     // I return a "densified" array, where more in-between points are generated
     function createMoreCoordinates(initialArrayOfCoordinates: L.LatLngExpression[], maxDeltaKm: number) {
-        const out: number[] = []
+        const out: L.LatLngExpression[]  = []
         for (let index = 0; index < initialArrayOfCoordinates.length - 1; index++) {
-            const a: number[] = initialArrayOfCoordinates[index];
+            const a: L.LatLngExpression = initialArrayOfCoordinates[index];
             const b: L.LatLngExpression = initialArrayOfCoordinates[index + 1];
-
             densifySegment(a, b, maxDeltaKm, out)
-            
         }
-
         return out;
     }
 
-    const moreCoordinates = $derived(createMoreCoordinates(arrayOfCoordinates, 0.2));
+    const moreCoordinates: L.LatLngExpression[] = $derived(createMoreCoordinates(arrayOfCoordinates, 0.2));
 
     async function createMap(container: HTMLDivElement) {
-        // async import to avoid leaflet attaching itselt to non-existing window
+        // async import to avoid leaflet attaching itself to non-existing window
         const L = (await import('leaflet')).default;
         // init map with fix zoom and no control
         let m = L.map(container, {
@@ -82,7 +56,6 @@
 
         for (let index = 0; index < moreCoordinates.length; index++) {
             const setOfCoordinates = moreCoordinates[index];
-            console.log(setOfCoordinates)
             L.marker(setOfCoordinates).addTo(m);
         }
 
