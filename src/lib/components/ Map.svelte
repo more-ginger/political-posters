@@ -2,14 +2,10 @@
     import type L from "leaflet";
     import 'leaflet/dist/leaflet.css';
     import {densifySegment} from "$lib/utils";
-    import {frankfurterAllee} from "$lib/walks";
     let map: L.Map | void = $state(undefined);
 
-    // The route itself lives in $lib/walks, because the server builds the
-    // corridor query from the same coordinates this map draws. Two copies would
-    // drift, and the symptom would be posters missing from a walk that looks
-    // perfectly correct on screen.
-    const arrayOfCoordinates: L.LatLngExpression[] = frankfurterAllee.coordinates;
+    // Bringing coordinates in as props
+    let {arrayOfCoordinates, data} = $props()
 
     // Here I input an original array with coordinates, already ordered according to my walk
     // I return a "densified" array, where more in-between points are generated
@@ -51,6 +47,11 @@
         for (let index = 0; index < moreCoordinates.length; index++) {
             const setOfCoordinates = moreCoordinates[index];
             L.marker(setOfCoordinates).addTo(m);
+        }
+
+        for (let index = 0; index < data.length; index++) {
+            const pole = data[index];
+            L.marker([pole.latitude, pole.longitude]).addTo(m);
         }
 
         return m
