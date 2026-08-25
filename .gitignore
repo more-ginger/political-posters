@@ -4,9 +4,4 @@ package-lock.json
 node_modules/
 .DS_Store
 .vscode/
-
-# Env — .env holds the Supabase secret key and the B2 application key.
-# .env.example is the template and is deliberately NOT ignored.
 .env
-.env.*
-!.env.example
