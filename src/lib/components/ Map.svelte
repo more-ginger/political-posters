@@ -4,19 +4,8 @@
     import {densifySegment} from "$lib/utils";
     let map: L.Map | void = $state(undefined);
 
-    // current walk, this could be passed as props if other walks will be planned
-    const arrayOfCoordinates: L.LatLngExpression[] = [
-        [52.521961, 13.413004],
-        [52.521060, 13.414911],
-        [52.521970, 13.416022],
-        [52.521728, 13.417370],
-        [52.520182, 13.422436],
-        [52.518469, 13.428276],
-        [52.515790, 13.454157],
-        [52.513495, 13.477016],
-        [52.512118, 13.490261],
-        [52.511318, 13.499087]
-      ]
+    // Bringing coordinates in as props
+    let {arrayOfCoordinates, data} = $props()
 
     // Here I input an original array with coordinates, already ordered according to my walk
     // I return a "densified" array, where more in-between points are generated
@@ -42,6 +31,7 @@
             zoomControl: false
         }).setView(arrayOfCoordinates[0], 18);
 
+        
         L.tileLayer(
         'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
         {
@@ -57,6 +47,11 @@
         for (let index = 0; index < moreCoordinates.length; index++) {
             const setOfCoordinates = moreCoordinates[index];
             L.marker(setOfCoordinates).addTo(m);
+        }
+
+        for (let index = 0; index < data.length; index++) {
+            const pole = data[index];
+            L.marker([pole.latitude, pole.longitude]).addTo(m);
         }
 
         return m
