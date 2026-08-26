@@ -2,10 +2,19 @@
     import type L from "leaflet";
     import 'leaflet/dist/leaflet.css';
     import {densifySegment} from "$lib/utils";
-    let map: L.Map | void = $state(undefined);
+    import {setMapContext} from '$lib/mapContext';
+    import { onMount } from "svelte";
+    let map: L.Map | undefined = $state(undefined);
+
+    // init setMapContext with undefined values
+    setMapContext({
+        getMap: () => map
+    })
 
     // Bringing coordinates in as props
-    let {arrayOfCoordinates, data} = $props()
+    let {arrayOfCoordinates, children, data} = $props()
+    let w: number = $state(0)
+    let h:number = $state(0)
 
     // Here I input an original array with coordinates, already ordered according to my walk
     // I return a "densified" array, where more in-between points are generated
@@ -49,10 +58,7 @@
             L.marker(setOfCoordinates).addTo(m);
         }
 
-        for (let index = 0; index < data.length; index++) {
-            const pole = data[index];
-            L.marker([pole.latitude, pole.longitude]).addTo(m);
-        }
+        L.svg().addTo(m);
 
         return m
     }
@@ -90,11 +96,20 @@
         } 
         map.panTo(currentWalkPosition, {animate: true, duration: 1})
     }
+
+    // Re-run setMapContext after map has been created
+    $effect(() => {
+        setMapContext({
+            getMap: () => map
+        })
+    })
+    
 </script>
 <div class="h-full relative">
-<div class="h-20 bg-red-200 z-2 flex items-stretch sticky top-0 z-2">
-    <button class="bg-purple-100 w-1/2 text-center border" onclick={() => goTo('back')}>back</button>
-    <button class="bg-purple-100 w-1/2 text-center border" onclick={() => goTo('forward')}>forth</button>
-</div>
-<div class="w-full h-full bg-green-100 absolute top-0 z-1" use:mapAction></div>
+    <div class="h-20 bg-red-200 z-2 flex items-stretch sticky top-0 z-3">
+        <button class="bg-purple-100 w-1/2 text-center border" onclick={() => goTo('back')}>back</button>
+        <button class="bg-purple-100 w-1/2 text-center border" onclick={() => goTo('forward')}>forth</button>
+    </div>
+    <div class="w-full h-full bg-green-100 absolute top-0 z-1" use:mapAction bind:clientWidth={w} bind:clientHeight={h}></div>
+    {@render children?.()}
 </div>

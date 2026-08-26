@@ -1,6 +1,7 @@
 <script lang="ts">
     import {frankfurterAllee} from "$lib/walks";
     import Map from "$lib/components/ Map.svelte";
+    import SvgOverlay from "$lib/components/SvgOverlay.svelte";
 
     let {data} = $props()
 
@@ -13,5 +14,7 @@
 </script>
 
 <div class="w-full bg-yellow-200 h-screen m-auto">
-    <Map {arrayOfCoordinates} data={data.submissions}/>
+    <Map {arrayOfCoordinates} data={data.submissions}>
+        <SvgOverlay data={data.submissions}/>
+    </Map>
 </div>
