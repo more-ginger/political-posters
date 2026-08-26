@@ -2,8 +2,7 @@ import {getContext, setContext} from 'svelte';
 import type L from 'leaflet';
 
 export interface MapContext {
-    getMap: () => L.Map | undefined,
-    getSvgOverlay: () => SVGSVGElement | L.SVG | undefined
+    getMap: () => L.Map | undefined
 }
 
 export function setMapContext (context: MapContext) {

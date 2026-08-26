@@ -1,10 +1,11 @@
 <script lang="ts">
     import type L from 'leaflet';
     import {getMapContext} from '$lib/mapContext';
-    const {getMap, getSvgOverlay} = getMapContext();
+    const {getMap} = getMapContext();
     const { data } = $props();
     let points: {x:number, y:number}[] = $state([])
     
+    // everytime the map state change (bc I drag or move) positions get calculated new
     function recomputePositions(): L.LeafletEventHandlerFn | undefined {
         const map = getMap();
         if (!map) return;
@@ -18,14 +19,12 @@
         })
     }
 
-
-    $inspect(points)
     $effect(() => {
-        // console.log('[D3Overlay] context received', getMap(), getSvgOverlay());
-
+        // Assign map context only once the map has updated at least once
         const map = getMap();
         if (!map) return;
 
+        // If context exists, triggers recomputePositions to calc correct x,y for dots
         map.on('zoom viewreset move', recomputePositions);
         recomputePositions();
 
