@@ -3,7 +3,7 @@ import type L from 'leaflet';
 
 export interface MapContext {
     getMap: () => L.Map | undefined,
-    getSvgOverlay: () => SVGSVGElement | undefined
+    getSvgOverlay: () => SVGSVGElement | L.SVG | undefined
 }
 
 export function setMapContext (context: MapContext) {

@@ -15,6 +15,6 @@
 
 <div class="w-full bg-yellow-200 h-screen m-auto">
     <Map {arrayOfCoordinates} data={data.submissions}>
-        <SvgOverlay/>
+        <SvgOverlay data={data.submissions}/>
     </Map>
 </div>

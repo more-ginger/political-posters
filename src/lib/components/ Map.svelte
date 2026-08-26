@@ -5,7 +5,7 @@
     import {setMapContext} from '$lib/mapContext';
     import { onMount } from "svelte";
     let map: L.Map | undefined = $state(undefined);
-    let svgOverlay: SVGSVGElement | undefined = $state(undefined)
+    let svgOverlay: SVGSVGElement | L.SVG | undefined = $state(undefined)
 
     // init setMapContext with undefined values
     setMapContext({
@@ -14,7 +14,7 @@
     })
 
     // Bringing coordinates in as props
-    let {arrayOfCoordinates, children} = $props()
+    let {arrayOfCoordinates, children, data} = $props()
     let w: number = $state(0)
     let h:number = $state(0)
 
@@ -60,7 +60,13 @@
             L.marker(setOfCoordinates).addTo(m);
         }
 
+         for (let index = 0; index < data.length; index++) {
+            const coords = data[index];
+            L.marker([coords.latitude, coords.longitude]).addTo(m);
+        }
+
         const svgLayer = L.svg().addTo(m);
+        svgOverlay = svgLayer._container;
 
         return m
     }
