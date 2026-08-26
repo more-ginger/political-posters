@@ -40,23 +40,22 @@
             zoomControl: false
         }).setView(arrayOfCoordinates[0], 18);
 
-        
+
         L.tileLayer(
-        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+        'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',
         {
-            attribution: `&copy;<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>,
-            &copy;<a href="https://carto.com/attributions" target="_blank">CARTO</a>`,
+            attribution: `&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>`,
             subdomains: 'abcd',
             maxZoom: 18
         }
         ).addTo(m);
 
-        L.polyline(arrayOfCoordinates, {color: 'red'}).addTo(m);
+        L.polyline(arrayOfCoordinates, {color: 'black'}).addTo(m);
 
-        for (let index = 0; index < moreCoordinates.length; index++) {
-            const setOfCoordinates = moreCoordinates[index];
-            L.marker(setOfCoordinates).addTo(m);
-        }
+        // for (let index = 0; index < moreCoordinates.length; index++) {
+        //     const setOfCoordinates = moreCoordinates[index];
+        //     L.marker(setOfCoordinates).addTo(m);
+        // }
 
         L.svg().addTo(m);
 

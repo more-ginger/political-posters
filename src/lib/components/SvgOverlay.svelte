@@ -1,5 +1,6 @@
 <script lang="ts">
     import type L from 'leaflet';
+    import SvgBar from './svgOverlay/svgBar.svelte';
     import {getMapContext} from '$lib/mapContext';
     const {getMap} = getMapContext();
     const { data } = $props();
@@ -35,6 +36,6 @@
 </script>
 <svg width="100%" height="100%" class="absolute inset-0 z-100 pointer-events-none">
         {#each points as point}
-            <circle cx={point.x} cy={point.y} r="5" fill="black"></circle>
+            <SvgBar point={point}/>
         {/each}
 </svg>

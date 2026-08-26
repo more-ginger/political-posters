@@ -43,7 +43,8 @@ export const frankfurterAllee: Walk = {
   slug: "frankfurter",
   title: "Frankfurter Allee",
   coordinates: [
-    [52.521961, 13.413004],
+    [52.521872, 13.411869],
+    [52.522224, 13.412506],
     [52.52106, 13.414911],
     [52.52197, 13.416022],
     [52.521728, 13.41737],
