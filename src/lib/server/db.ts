@@ -53,7 +53,7 @@ function db(): SupabaseClient {
  */
 const SUBMISSION_COLUMNS = "id,latitude,longitude,accuracy,captured_at";
 const POSTER_COLUMNS =
-  "id,submission_id,name,slogan,party,dominant_colors,crop_storage_key";
+  "id,submission_id,name,slogan,party,dominant_colors,crop_storage_key, box";
 
 /** The submission columns as they come back from PostgREST, before renaming. */
 interface RawSubmission {
@@ -72,6 +72,7 @@ interface RawPoster {
   party: string | null;
   dominant_colors: string[] | null;
   crop_storage_key: string | null;
+  box: {}
 }
 
 export interface ReadOptions {
@@ -132,6 +133,7 @@ async function fetchPostersBySubmission(
       // thing to a caller that just wants to render the colours.
       dominantColors: row.dominant_colors ?? [],
       hasCrop: row.crop_storage_key !== null,
+      box: row.box
     });
     grouped.set(row.submission_id, posters);
   }

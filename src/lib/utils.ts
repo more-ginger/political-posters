@@ -25,3 +25,16 @@ export function densifySegment(
     densifySegment(a, midpointTuples, maxDistance, out);
     densifySegment(midpointTuples, b, maxDistance, out);
 }
+
+
+export const partiesWithColors = {
+    "Die Linke": "purple",
+    "SPD": "red",
+    "AfD": "azure",
+    "BSW": "maroon",
+    "Bündnis 90/Die Grünen": "yellowgreen",
+    "CDU": "gray",
+    "DKP": "orange",
+    "Tierschutzpartei": "darkturquoise",
+    "Volt": "violet"
+}
