@@ -3,7 +3,6 @@
     import 'leaflet/dist/leaflet.css';
     import {densifySegment} from "$lib/utils";
     import {setMapContext} from '$lib/mapContext';
-    import { onMount } from "svelte";
     let map: L.Map | undefined = $state(undefined);
 
     // init setMapContext with undefined values
@@ -12,7 +11,7 @@
     })
 
     // Bringing coordinates in as props
-    let {arrayOfCoordinates, children, data} = $props()
+    let {arrayOfCoordinates, children} = $props()
     let w: number = $state(0)
     let h:number = $state(0)
 
@@ -75,8 +74,9 @@
         }
     }
 
-    // Interaction: the user clicks back and forth to "walk" the path
-    // index for position
+    /** Interaction: the user clicks back and forth to "walk" the path
+    index for position
+    */
     let indexOfWalkPosition: number = $state(0);
     // set of coordinates for the walk, updates on click
     let currentWalkPosition: L.LatLngExpression = $derived(moreCoordinates[indexOfWalkPosition])

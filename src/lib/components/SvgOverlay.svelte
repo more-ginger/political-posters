@@ -15,7 +15,8 @@
             const pixelCoords = map.latLngToContainerPoint([d.latitude, d.longitude])
             return {
                 x: pixelCoords.x,
-                y: pixelCoords.y
+                y: pixelCoords.y,
+                ...d
             }
         })
     }
