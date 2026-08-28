@@ -5,7 +5,6 @@
 
     let {data} = $props()
     let mapRef: ReturnType<typeof Map> | undefined = $state(undefined);
-    let direction: string = $state('')
 
     // The route itself lives in $lib/walks, because the server builds the
     // corridor query from the same coordinates this map draws. Two copies would
@@ -25,7 +24,7 @@
         <button class="bg-purple-100 w-1/2 text-center border" onclick={() => goTo('back')}>back</button>
         <button class="bg-purple-100 w-1/2 text-center border" onclick={() => goTo('forward')}>forth</button>
     </div>
-    <Map bind:this={mapRef} arrayOfCoordinates={arrayOfCoordinates} direction={direction}>
+    <Map bind:this={mapRef} arrayOfCoordinates={arrayOfCoordinates}>
         <SvgOverlay data={data.submissions}/>
     </Map>
 </div>

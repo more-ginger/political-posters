@@ -3,7 +3,6 @@
     import 'leaflet/dist/leaflet.css';
     import {densifySegment} from "$lib/utils";
     import {setMapContext} from '$lib/mapContext';
-    import {untrack} from 'svelte';
     let map: L.Map | undefined = $state(undefined);
 
     // init setMapContext with undefined values
@@ -12,9 +11,7 @@
     })
 
     // Bringing coordinates in as props
-    let {arrayOfCoordinates, children, direction} = $props()
-    let w: number = $state(0)
-    let h:number = $state(0)
+    let {arrayOfCoordinates, children} = $props()
 
     // Here I input an original array with coordinates, already ordered according to my walk
     // I return a "densified" array, where more in-between points are generated
@@ -51,7 +48,7 @@
         ).addTo(m);
 
         L.polyline(arrayOfCoordinates, {color: 'black'}).addTo(m);
-
+        // adds svg overlay layer for datavis
         L.svg().addTo(m);
 
         return m
@@ -78,8 +75,10 @@
     let currentWalkPosition: L.LatLngExpression = $derived(moreCoordinates[indexOfWalkPosition])
 
     function panMap(direction: string) {
+        // Checks if map exists or if direction is not default
         if (!map || direction === '') return;
 
+        // Changes position to pan to.
         if (direction === 'back') {
             indexOfWalkPosition = indexOfWalkPosition > 0 
             ? indexOfWalkPosition - 1
@@ -90,9 +89,11 @@
             : indexOfWalkPosition;  
         }
 
+        // Uses leaflet to pan.
         map.panTo(currentWalkPosition, {animate: true, duration: 1});
     }
 
+    // export for parent to trigget panMap function
     export function triggerPan(direction:string) {
         panMap(direction);
     }
@@ -106,6 +107,6 @@
     
 </script>
 <div class="h-full relative">
-    <div class="w-full h-full bg-green-100 absolute top-0 z-1" use:mapAction bind:clientWidth={w} bind:clientHeight={h}></div>
+    <div class="w-full h-full bg-green-100 absolute top-0 z-1" use:mapAction></div>
     {@render children?.()}
 </div>
