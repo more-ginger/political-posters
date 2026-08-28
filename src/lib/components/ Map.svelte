@@ -3,6 +3,7 @@
     import 'leaflet/dist/leaflet.css';
     import {densifySegment} from "$lib/utils";
     import {setMapContext} from '$lib/mapContext';
+    import {untrack} from 'svelte';
     let map: L.Map | undefined = $state(undefined);
 
     // init setMapContext with undefined values
@@ -11,7 +12,7 @@
     })
 
     // Bringing coordinates in as props
-    let {arrayOfCoordinates, children} = $props()
+    let {arrayOfCoordinates, children, direction} = $props()
     let w: number = $state(0)
     let h:number = $state(0)
 
@@ -51,11 +52,6 @@
 
         L.polyline(arrayOfCoordinates, {color: 'black'}).addTo(m);
 
-        // for (let index = 0; index < moreCoordinates.length; index++) {
-        //     const setOfCoordinates = moreCoordinates[index];
-        //     L.marker(setOfCoordinates).addTo(m);
-        // }
-
         L.svg().addTo(m);
 
         return m
@@ -81,19 +77,24 @@
     // set of coordinates for the walk, updates on click
     let currentWalkPosition: L.LatLngExpression = $derived(moreCoordinates[indexOfWalkPosition])
 
-    function goTo(direction: string) {
-        if (!map) return;
+    function panMap(direction: string) {
+        if (!map || direction === '') return;
 
         if (direction === 'back') {
             indexOfWalkPosition = indexOfWalkPosition > 0 
             ? indexOfWalkPosition - 1
             : indexOfWalkPosition;
         } else {
-            indexOfWalkPosition = indexOfWalkPosition < moreCoordinates.length 
+            indexOfWalkPosition = indexOfWalkPosition < moreCoordinates.length - 1
             ? indexOfWalkPosition + 1 
             : indexOfWalkPosition;  
-        } 
-        map.panTo(currentWalkPosition, {animate: true, duration: 1})
+        }
+
+        map.panTo(currentWalkPosition, {animate: true, duration: 1});
+    }
+
+    export function triggerPan(direction:string) {
+        panMap(direction);
     }
 
     // Re-run setMapContext after map has been created
@@ -105,10 +106,6 @@
     
 </script>
 <div class="h-full relative">
-    <div class="h-20 bg-red-200 z-2 flex items-stretch sticky top-0 z-3">
-        <button class="bg-purple-100 w-1/2 text-center border" onclick={() => goTo('back')}>back</button>
-        <button class="bg-purple-100 w-1/2 text-center border" onclick={() => goTo('forward')}>forth</button>
-    </div>
     <div class="w-full h-full bg-green-100 absolute top-0 z-1" use:mapAction bind:clientWidth={w} bind:clientHeight={h}></div>
     {@render children?.()}
 </div>
