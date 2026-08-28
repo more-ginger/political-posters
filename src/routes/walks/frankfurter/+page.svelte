@@ -2,6 +2,7 @@
     import {frankfurterAllee} from "$lib/walks";
     import Map from "$lib/components/ Map.svelte";
     import SvgOverlay from "$lib/components/SvgOverlay.svelte";
+    import BumpChart from "$lib/components/bump-chart/bumpChart.svelte";
 
     let {data} = $props()
     let mapRef: ReturnType<typeof Map> | undefined = $state(undefined);
@@ -19,10 +20,13 @@
 
 </script>
 
-<div class="w-full bg-yellow-200 h-screen m-auto">
-    <div class="h-20 bg-red-200 z-2 flex items-stretch sticky top-0 z-3">
+<div class="w-full h-full relative bg-yellow-200 m-auto">
+    <div class="w-sm h-10 bg-red-200 z-2 absolute top-10 z-3">
+    <BumpChart/>
+    <div class="flex items-stretch sticky">
         <button class="bg-purple-100 w-1/2 text-center border" onclick={() => goTo('back')}>back</button>
         <button class="bg-purple-100 w-1/2 text-center border" onclick={() => goTo('forward')}>forth</button>
+    </div>
     </div>
     <Map bind:this={mapRef} arrayOfCoordinates={arrayOfCoordinates}>
         <SvgOverlay data={data.submissions}/>

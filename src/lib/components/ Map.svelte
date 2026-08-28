@@ -106,7 +106,7 @@
     })
     
 </script>
-<div class="h-full relative">
-    <div class="w-full h-full bg-green-100 absolute top-0 z-1" use:mapAction></div>
+<div>
+    <div class="w-full h-screen bg-green-100 absolute top-0 z-1" use:mapAction></div>
     {@render children?.()}
 </div>

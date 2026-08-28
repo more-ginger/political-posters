@@ -35,7 +35,7 @@
         }
     })
 </script>
-<svg width="100%" height="100%" class="absolute inset-0 z-100 pointer-events-none">
+<svg width="100%" height="100%" class="absolute inset-0 z-2 pointer-events-none">
         {#each points as point}
             <SvgBar point={point}/>
         {/each}
