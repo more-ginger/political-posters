@@ -32,6 +32,7 @@ export interface Poster {
   slogan: string | null;
   party: string | null;
   dominantColors: string[];
+  box: {}
   /**
    * Whether a cropped image exists for this poster. `crop_storage_key` is
    * nullable — the analysis pass did not always produce one — so the UI has to
